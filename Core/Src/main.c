@@ -54,7 +54,7 @@ typedef struct {
 
 ADCStructure ADCChannel[3] = { 0 };
 
-float ADCOutputConverted = 0.0;
+float ADCOutputConverted = 0;
 uint32_t ADCMode = 0;
 GPIO_PinState ButtonState[2];
 
@@ -105,7 +105,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-
+	ADCPollingMethodInit();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -128,15 +128,18 @@ int main(void)
 			ADCMode = 0;
 		}
 
-
 	  }
-	  ButtonState[1]=ButtonState[0];
 
 	  if(ADCMode == 0)
 	  {
-		  ADCOutputConverted = (3300/4096)*ADCChannel[0].data;
+		  ADCOutputConverted = (ADCChannel[0].data)/(4.096e3)*(3.3e3);
 
 	  }
+	  else
+	  {
+		  ADCOutputConverted = ((((ADCChannel[2].data)/(4.096e3)*(3.3))-0.76)/(2.5/1000))+25;
+	  }
+	  ButtonState[1]=ButtonState[0];
   }
   /* USER CODE END 3 */
 }
